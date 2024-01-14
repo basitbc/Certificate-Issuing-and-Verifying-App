@@ -22,7 +22,7 @@ Before you start, make sure you have the following software and tools installed 
 
 The project is organized as follows:
 
-- **client/:** Contains the frontend code built with [React](https://reactjs.org/).
+- **client-fe/:** Contains the frontend code built with [React](https://reactjs.org/).
   - **src/:** Main source code for the React app.
     - **components/:** Reusable React components used throughout the application.
     - **configs/:** All the configs are present here.
@@ -31,7 +31,7 @@ The project is organized as follows:
     - **utils/:** Utility functions or helper modules.
     - **...
 
-- **server/:** Houses the backend logic developed with [Node.js](https://nodejs.org/).
+- **server-be/:** Houses the backend logic developed with [Node.js](https://nodejs.org/).
   - **src/:** Main source code for the Node.js server.
     - **controllers/:** Controllers handling route logic and business logic.
     - **models/:** Data models or database schemas.
@@ -52,7 +52,7 @@ The project is organized as follows:
 git clone https://github.com/basitbc/Certificate-Issuing-and-Verifying-App.git
 
 # Navigate to the server folder
-cd server
+cd server-be
 
 # Install server dependencies
 npm install
@@ -62,7 +62,7 @@ npm start
 
 
 # Open a new terminal and navigate to the client folder
-cd client
+cd client-fe
 
 # Install client dependencies
 npm install
