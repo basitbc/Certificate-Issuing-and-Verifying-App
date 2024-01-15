@@ -19,6 +19,7 @@ const GenerateForm = ({setShowModal}) => {
     dateOfIssue: '',
     issuerName: '',
     courseName: '',
+    networkError:""
   });
 
   // Function to handle form input changes
@@ -29,7 +30,8 @@ const GenerateForm = ({setShowModal}) => {
 
 
    // Function to handle certificate generation
-   const handleGenerateCertificate = () => {
+   const handleGenerateCertificate = async (e) => {
+    e.preventDefault();
     // Check if any field is empty
     const isFormValid = Object.values(formData).every((value) => value.trim() !== '');
 
@@ -40,6 +42,7 @@ const GenerateForm = ({setShowModal}) => {
         dateOfIssue: '',
         issuerName: '',
         courseName: '',
+        
       });
 
       // Reset the form errors
@@ -48,6 +51,7 @@ const GenerateForm = ({setShowModal}) => {
         dateOfIssue: '',
         issuerName: '',
         courseName: '',
+        networkError:""
       });
 
       // Create the certificate object
@@ -58,15 +62,29 @@ const GenerateForm = ({setShowModal}) => {
         courseName: formData?.courseName,
       };
 
-      // Handle the generated certificate (you can store or display it as needed)
-    certificateService.generateCertificate(certificate).then((data)=>{
+    // try catch to handle the API call and it responses and errors if any
+    try {
+
+      const certificateData = await certificateService.generateCertificate(certificate);
       
-      setGeneratedCertificate(data);
-      setShowModal(true);
-    })
-      console.log('Generated Certificate:', certificate);
+      setGeneratedCertificate(certificateData);
+      setShowModal(true)
+    } catch (error) {
+      // Handling error
+      console.error('Error generating certificate:', error);
+
+      // showing Error
+        setFormErrors({
+        networkError:"Network Error. Please check your network and try again",
+        recipientName: "",
+        dateOfIssue: '',
+        issuerName: '',
+        courseName: '',
+
+      });
+    }
     } else {
-      // Set error messages for empty fields
+      // Setting error messages for empty fields
       const updatedFormErrors = {};
       for (const key in formData) {
         if (formData[key].trim() === '') {
@@ -81,10 +99,11 @@ const GenerateForm = ({setShowModal}) => {
 
   return (
 
-    <form className="w-full max-w-lg">
+    <form onSubmit={handleGenerateCertificate} className="w-full max-w-lg">
     {/* Form inputs */}
     
     {/* Recipient's Name */}
+    <p className="text-red-500 text-xs italic">{formErrors.networkError}</p>
     <div className="flex flex-wrap -mx-3 mb-6">
       <div className="w-full md:w-1/2 px-3 mb-6 md:mb-0">
         <label className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" htmlFor="recipient-name">
@@ -170,9 +189,9 @@ const GenerateForm = ({setShowModal}) => {
     <div className="flex flex-wrap -mx-3 mb-6">
       <div className="w-full px-3">
         <button
-          type="button"
+          type="submit"
           className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue"
-          onClick={handleGenerateCertificate}
+          
         >
           Generate Certificate
         </button>

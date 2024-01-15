@@ -8,6 +8,8 @@ const VerifyForm = ({ setShowModal }) => {
   // State to manage the Certificate ID
   const [certificateId, setCertificateId] = useState('');
 
+  const [networkError, setNetworkError] = useState("")
+
   // State to manage the error message for the Certificate ID
   const [certificateIdError, setCertificateIdError] = useState('');
 
@@ -18,24 +20,28 @@ const VerifyForm = ({ setShowModal }) => {
   };
 
   // Function to handle certificate verification
-  const handleVerifyCertificate = () => {
+  const handleVerifyCertificate = async (e) => {
+    e.preventDefault()
     // Check if the Certificate ID is not empty
     if (certificateId.trim() !== '') {
       // Reset the Certificate ID error
       setCertificateIdError('');
 
 
-      // Handle the verification (you can handle it as needed)
-      certificateService.verifyCertificate(certificateId).then((data) => {
-if(data?.data?.verified){
+      // Handle the verification
+      try {
+const isVerified = await certificateService.verifyCertificate(certificateId)
+if(isVerified?.data?.verified){
   setShowModal(true);
-  setGeneratedCertificate(data);
+  setGeneratedCertificate(isVerified);
   setCertificateId('');
 }
 else{
   setCertificateIdError('Certificate ID not valid');
 }
-      });
+      } catch{
+setNetworkError("Please check your network and try again")
+      }
     } else {
       // Set error message for an empty Certificate ID field
       setCertificateIdError('Please fill out this field.');
@@ -43,7 +49,9 @@ else{
   };
 
   return (
-    <div>
+    <form 
+    onSubmit={handleVerifyCertificate}
+    >
       {/* Certificate ID */}
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full px-3">
@@ -64,6 +72,7 @@ else{
             onChange={handleInputChange}
           />
           <p className="text-red-500 text-xs italic">{certificateIdError}</p>
+          <p className="text-red-500 text-xs italic">{networkError}</p>
         </div>
       </div>
 
@@ -71,15 +80,14 @@ else{
       <div className="flex flex-wrap -mx-3 mb-6">
         <div className="w-full px-3">
           <button
-            type="button"
+            type="submit"
             className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:shadow-outline-blue"
-            onClick={handleVerifyCertificate}
           >
             Verify Certificate
           </button>
         </div>
       </div>
-    </div>
+    </form>
   );
 };
 
